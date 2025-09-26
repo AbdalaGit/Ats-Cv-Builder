@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مُنشئ السيرة الذاتية المتوافق مع أنظمة ATS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            direction: rtl;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            background: rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .ats-warning {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            min-height: 85vh;
+        }
+
+        .form-section {
+            padding: 30px;
+            background: #f8f9fa;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .preview-section {
+            padding: 30px;
+            background: white;
+            position: relative;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            font-weight: bold;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .label-hint {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: normal;
+            margin-right: 10px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            background: #f8f9ff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            line-height: 1.5;
+        }
+
+        .keywords-input {
+            background: #fff3cd !important;
+            border-color: #ffc107 !important;
+        }
+
+        .keywords-hint {
+            font-size: 0.9rem;
+            color: #856404;
+            margin-top: 5px;
+            background: #fff3cd;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 8px 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .btn-excel {
+            background: linear-gradient(135deg, #217346 0%, #1a5e36 100%);
+        }
+
+        .dynamic-section {
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            background: #ecf0f1;
+        }
+
+        .dynamic-item {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* ATS-Friendly CV Preview Styles */
+        .cv-preview {
+            background: white;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            font-size: 11pt;
+            line-height: 1.3;
+            color: #000000;
+            direction: ltr;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.75in;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            border: 1px solid #ddd;
+            min-height: 11in; /* إضافة ارتفاع أدنى */
+        }
+
+        .cv-header {
+            text-align: center;
+            margin-bottom: 24pt;
+            border-bottom: 1pt solid #000000;
+            padding-bottom: 12pt;
+        }
+
+        .cv-name {
+            font-size: 20pt;
+            font-weight: bold;
+            margin-bottom: 6pt;
+            text-transform: uppercase;
+            letter-spacing: 1pt;
+        }
+
+        .cv-title {
+            font-size: 14pt;
+            margin-bottom: 12pt;
+            font-weight: normal;
+        }
+
+        .cv-contact {
+            font-size: 11pt;
+            line-height: 1.4;
+        }
+
+        .cv-contact div {
+            margin-bottom: 3pt;
+        }
+
+        .cv-body {
+            text-align: right;
+        }
+
+        .cv-section {
+            margin-bottom: 20pt;
+            page-break-inside: avoid;
+        }
+
+        .cv-section h3 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10pt;
+            border-bottom: 1pt solid #000000;
+            padding-bottom: 4pt;
+        }
+
+        .cv-item {
+            margin-bottom: 12pt;
+            page-break-inside: avoid;
+        }
+
+        .cv-item h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-bottom: 3pt;
+        }
+
+        .cv-item .meta {
+            font-size: 11pt;
+            margin-bottom: 6pt;
+            font-style: italic;
+        }
+
+        .cv-item p, .cv-item ul {
+            font-size: 11pt;
+            line-height: 1.4;
+            margin-bottom: 6pt;
+        }
+
+        .cv-item ul {
+            padding-right: 20pt;
+        }
+
+        .cv-item li {
+            margin-bottom: 3pt;
+        }
+
+        .skills-list {
+            line-height: 1.6;
+            font-size: 11pt;
+        }
+
+        .download-section {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 0;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            color: white;
+        }
+
+        .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0,0,0,0.9);
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ats-score {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .score-bad {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .score-medium {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+        }
+
+        .pro-tip {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #155724;
+        }
+
+        .pro-tip strong {
+            color: #27ae60;
+        }
+
+        .database-section {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .database-section h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .form-section {
+                max-height: none;
+                border-bottom: 2px solid #ecf0f1;
+            }
+            
+            .preview-section {
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .cv-preview {
+                padding: 0.5in;
+                font-size: 10pt;
+            }
+            
+            .cv-name {
+                font-size: 18pt;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .form-section,
+            .preview-section {
+                padding: 20px;
+            }
+        }
+
+        /* Print styles for better PDF output */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .cv-preview {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0.75in;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>مُنشئ السيرة الذاتية المتوافق مع أنظمة ATS</h1>
+            <p>أنشئ سيرتك الذاتية بتنسيق احترافي يمر عبر أنظمة الفحص الآلي بنجاح 100%</p>
+            <div class="ats-warning">
+                ⚠️ هذا المُنشئ يلتزم بمعايير ATS الصارمة - بدون ألوان، رسوم، أو تعقيدات تقنية
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <!-- Database Section -->
+                <!-- <div class="database-section">
+                    <h3>📊 قاعدة البيانات</h3>
+                    <p>جميع البيانات يتم حفظها تلقائياً في ملف Excel</p>
+                    <button class="btn btn-excel" onclick="exportToExcel()">📋 تصدير قاعدة البيانات Excel</button>
+                    <button class="btn btn-secondary" onclick="viewDatabaseStats()">📈 إحصائيات قاعدة البيانات</button>
+                </div> -->
+
+                <!-- ATS Score -->
+                <div class="ats-score" id="atsScore">
+                    📊 درجة توافق ATS: <span id="scoreValue">85%</span>
+                    <div style="font-size: 0.9rem; margin-top: 5px;" id="scoreText">ممتاز - جاهز للإرسال</div>
+                </div>
+
+                <div class="section-title">المعلومات الشخصية</div>
+                
+                <div class="form-group">
+                    <label>الاسم الكامل <span class="label-hint">(كما في جواز السفر)</span></label>
+                    <input type="text" id="fullName" placeholder="أحمد محمد علي السعدي" maxlength="50">
+                </div>
+
+                <div class="form-group">
+                    <label>المسمى الوظيفي المستهدف <span class="label-hint">(يجب أن يطابق الوظيفة المتقدم لها)</span></label>
+                    <input type="text" id="jobTitle" placeholder="مطور ويب أول | Senior Web Developer" maxlength="60">
+                    <div class="pro-tip">
+                        <strong>نصيحة محترف:</strong> استخدم نفس المسمى الوظيفي الموجود في إعلان الوظيفة بالضبط
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="email" placeholder="ahmed.alsaadi@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" id="phone" placeholder="+966501234567">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>المدينة</label>
+                        <input type="text" id="city" placeholder="الرياض">
+                    </div>
+                    <div class="form-group">
+                        <label>البلد</label>
+                        <input type="text" id="country" placeholder="المملكة العربية السعودية">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>LinkedIn <span class="label-hint">(اختياري)</span></label>
+                    <input type="url" id="linkedin" placeholder="https://linkedin.com/in/ahmed-alsaadi">
+                </div>
+
+                <div class="section-title">الملف الشخصي المهني</div>
+                
+                <div class="form-group">
+                    <label>ملخص مهني <span class="label-hint">(2-4 جمل تلخص خبرتك وأهدافك)</span></label>
+                    <textarea id="summary" placeholder="مطور ويب خبير بأكثر من 5 سنوات في تطوير التطبيقات باستخدام React و Node.js. متخصص في بناء حلول قابلة للتطوير وتحسين أداء المواقع. أسعى للانضمام لفريق تقني متقدم لتطوير منتجات رقمية مبتكرة." class="keywords-input"></textarea>
+                    <div class="keywords-hint">
+                        💡 <strong>مهم جداً:</strong> استخدم الكلمات المفتاحية من إعلان الوظيفة هنا
+                    </div>
+                </div>
+
+                <div class="section-title">الخبرات العملية</div>
+                <div class="pro-tip">
+                    <strong>معيار ATS:</strong> اكتب الخبرات بترتيب زمني عكسي (الأحدث أولاً) واستخدم نقاط منجزات واضحة
+                </div>
+                
+                <div id="experienceContainer" class="dynamic-section">
+                    <div class="dynamic-item" data-type="experience">
+                        <button class="remove-btn" onclick="removeItem(this)">×</button>
+                        <div class="form-group">
+                            <label>المسمى الوظيفي</label>
+                            <input type="text" class="exp-title" placeholder="مطور ويب أول">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>اسم الشركة</label>
+                                <input type="text" class="exp-company" placeholder="شركة التقنيات المتقدمة">
+                            </div>
+                            <div class="form-group">
+                                <label>المدينة</label>
+                                <input type="text" class="exp-location" placeholder="الرياض">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>تاريخ البداية</label>
+                                <input type="text" class="exp-start" placeholder="يناير 2020">
+                            </div>
+                            <div class="form-group">
+                                <label>تاريخ النهاية</label>
+                                <input type="text" class="exp-end" placeholder="الحاضر">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>المهام والإنجازات <span class="label-hint">(كل نقطة في سطر منفصل)</span></label>
+                            <textarea class="exp-desc keywords-input" placeholder="• طوّرت تطبيق ويب بتقنية React زاد المبيعات بنسبة 25%&#10;• قدت فريق من 3 مطورين لإنجاز 5 مشاريع في الوقت المحدد&#10;• حسّنت أداء قاعدة البيانات مما قلل وقت التحميل بنسبة 40%&#10;• تعاملت مع JavaScript, React, Node.js, MongoDB"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addExperience()">إضافة خبرة عملية</button>
+
+                <div class="section-title">التعليم</div>
+                <div id="educationContainer" class="dynamic-section">
+                    <div class="dynamic-item" data-type="education">
+                        <button class="remove-btn" onclick="removeItem(this)">×</button>
+                        <div class="form-group">
+                            <label>الدرجة العلمية</label>
+                            <input type="text" class="edu-degree" placeholder="بكالوريوس علوم الحاسب">
+                        </div>
+                        <div class="form-group">
+                            <label>اسم الجامعة/المؤسسة</label>
+                            <input type="text" class="edu-school" placeholder="جامعة الملك سعود">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>المدينة</label>
+                                <input type="text" class="edu-location" placeholder="الرياض">
+                            </div>
+                            <div class="form-group">
+                                <label>سنة التخرج</label>
+                                <input type="text" class="edu-year" placeholder="2020">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>التقدير/المعدل <span class="label-hint">(اختياري)</span></label>
+                            <input type="text" class="edu-gpa" placeholder="امتياز / 3.8 من 4.0">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addEducation()">إضافة تعليم</button>
+
+                <div class="section-title">المهارات التقنية</div>
+                <div class="pro-tip">
+                    <strong>مهم جداً لـ ATS:</strong> اكتب المهارات بأسمائها الدقيقة كما تظهر في إعلان الوظيفة
+                </div>
+                
+                <div class="form-group">
+                    <label>لغات البرمجة</label>
+                    <input type="text" id="programmingLanguages" placeholder="JavaScript, Python, Java, C#" class="keywords-input">
+                </div>
+
+                <div class="form-group">
+                    <label>الأطر والمكتبات (Frameworks)</label>
+                    <input type="text" id="frameworks" placeholder="React.js, Node.js, Express.js, Angular, Vue.js" class="keywords-input">
+                </div>
+
+                <div class="form-group">
+                    <label>قواعد البيانات</label>
+                    <input type="text" id="databases" placeholder="MySQL, MongoDB, PostgreSQL, Redis" class="keywords-input">
+                </div>
+
+                <div class="form-group">
+                    <label>الأدوات والتقنيات</label>
+                    <input type="text" id="tools" placeholder="Git, Docker, AWS, Jenkins, Kubernetes" class="keywords-input">
+                </div>
+
+                <div class="form-group">
+                    <label>مهارات إضافية</label>
+                    <input type="text" id="additionalSkills" placeholder="Agile, Scrum, API Design, Microservices" class="keywords-input">
+                </div>
+
+                <div class="section-title">الشهادات المهنية</div>
+                <div id="certificatesContainer" class="dynamic-section">
+                    <div class="dynamic-item" data-type="certificate">
+                        <button class="remove-btn" onclick="removeItem(this)">×</button>
+                        <div class="form-group">
+                            <label>اسم الشهادة</label>
+                            <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>الجهة المانحة</label>
+                                <input type="text" class="cert-issuer" placeholder="Amazon Web Services">
+                            </div>
+                            <div class="form-group">
+                                <label>تاريخ الحصول</label>
+                                <input type="text" class="cert-date" placeholder="سبتمبر 2023">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addCertificate()">إضافة شهادة</button>
+
+                <div class="section-title">اللغات</div>
+                <div id="languagesContainer" class="dynamic-section">
+                    <div class="dynamic-item" data-type="language">
+                        <button class="remove-btn" onclick="removeItem(this)">×</button>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>اللغة</label>
+                                <input type="text" class="lang-name" placeholder="الإنجليزية">
+                            </div>
+                            <div class="form-group">
+                                <label>مستوى الإتقان</label>
+                                <select class="lang-level">
+                                    <option value="مبتدئ">مبتدئ</option>
+                                    <option value="متوسط">متوسط</option>
+                                    <option value="متقدم">متقدم</option>
+                                    <option value="طلق">طلق</option>
+                                    <option value="لغة أم">لغة أم</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addLanguage()">إضافة لغة</button>
+
+                <div style="margin-top: 40px; padding-top: 30px; border-top: 3px solid #3498db;">
+                    <button class="btn btn-success" onclick="generatePDF()" style="font-size: 1.1rem; padding: 16px 32px;">
+                        📄 تحميل السيرة الذاتية PDF
+                    </button>
+                    <button class="btn" onclick="updatePreview()">🔄 تحديث المعاينة</button>
+                    <button class="btn btn-secondary" onclick="clearForm()">🗑️ مسح البيانات</button>
+                </div>
+
+                <div class="loading" id="loadingDiv">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <p>جاري إنشاء ملف PDF متوافق مع أنظمة ATS...</p>
+                        <p>يرجى الانتظار قليلاً</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section">
+                <div class="download-section">
+                    <button class="btn btn-success" onclick="generatePDF()">📄 تحميل PDF</button>
+                    <button class="btn" onclick="updatePreview()">🔄 تحديث</button>
+                </div>
+                
+                <div class="cv-preview" id="cvPreview">
+                    <div class="cv-header">
+                        <div class="cv-name" id="previewName">اسمك الكامل</div>
+                        <div class="cv-title" id="previewTitle">المسمى الوظيفي</div>
+                        <div class="cv-contact" id="previewContact">
+                            <div>Email: your.email@domain.com</div>
+                            <div>Phone: +966501234567</div>
+                            <div>Location: City, Country</div>
+                        </div>
+                    </div>
+
+                    <div class="cv-body">
+                        <div class="cv-section" id="summarySection">
+                            <h3>PROFESSIONAL SUMMARY</h3>
+                            <p id="previewSummary">Professional summary will appear here...</p>
+                        </div>
+
+                        <div class="cv-section" id="experienceSection">
+                            <h3>PROFESSIONAL EXPERIENCE</h3>
+                            <div id="previewExperience">
+                                <!-- Experience items will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="cv-section" id="educationSection">
+                            <h3>EDUCATION</h3>
+                            <div id="previewEducation">
+                                <!-- Education items will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="cv-section" id="skillsSection">
+                            <h3>TECHNICAL SKILLS</h3>
+                            <div id="previewSkills">
+                                <!-- Skills will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="cv-section" id="certificatesSection" style="display: none;">
+                            <h3>CERTIFICATIONS</h3>
+                            <div id="previewCertificates">
+                                <!-- Certificates will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="cv-section" id="languagesSection" style="display: none;">
+                            <h3>LANGUAGES</h3>
+                            <div id="previewLanguages">
+                                <!-- Languages will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include SheetJS for Excel functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        // Database to store all user data
+        let cvDatabase = [];
+        let currentCvId = null;
+
+        // Initialize the form
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromDatabase();
+            updatePreview();
+            calculateATSScore();
+            
+            // Add event listeners for real-time updates
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updatePreview();
+                    calculateATSScore();
+                    autoSaveToDatabase();
+                });
+            });
+
+            // Load existing data from database if available
+            loadExistingData();
+        });
+
+        // Auto-save to database every time user types
+        function autoSaveToDatabase() {
+            const userData = collectAllData();
+            if (userData.personalInfo.fullName || userData.personalInfo.email) {
+                saveToDatabase(userData);
+            }
+        }
+
+        // Collect all form data
+        function collectAllData() {
+            const data = {
+                id: currentCvId || Date.now(),
+                timestamp: new Date().toISOString(),
+                personalInfo: {
+                    fullName: document.getElementById('fullName').value || '',
+                    jobTitle: document.getElementById('jobTitle').value || '',
+                    email: document.getElementById('email').value || '',
+                    phone: document.getElementById('phone').value || '',
+                    city: document.getElementById('city').value || '',
+                    country: document.getElementById('country').value || '',
+                    linkedin: document.getElementById('linkedin').value || '',
+                    summary: document.getElementById('summary').value || ''
+                },
+                experience: [],
+                education: [],
+                skills: {
+                    programmingLanguages: document.getElementById('programmingLanguages').value || '',
+                    frameworks: document.getElementById('frameworks').value || '',
+                    databases: document.getElementById('databases').value || '',
+                    tools: document.getElementById('tools').value || '',
+                    additionalSkills: document.getElementById('additionalSkills').value || ''
+                },
+                certificates: [],
+                languages: []
+            };
+
+            // Collect experience data
+            document.querySelectorAll('#experienceContainer .dynamic-item').forEach(item => {
+                data.experience.push({
+                    title: item.querySelector('.exp-title').value || '',
+                    company: item.querySelector('.exp-company').value || '',
+                    location: item.querySelector('.exp-location').value || '',
+                    startDate: item.querySelector('.exp-start').value || '',
+                    endDate: item.querySelector('.exp-end').value || '',
+                    description: item.querySelector('.exp-desc').value || ''
+                });
+            });
+
+            // Collect education data
+            document.querySelectorAll('#educationContainer .dynamic-item').forEach(item => {
+                data.education.push({
+                    degree: item.querySelector('.edu-degree').value || '',
+                    school: item.querySelector('.edu-school').value || '',
+                    location: item.querySelector('.edu-location').value || '',
+                    year: item.querySelector('.edu-year').value || '',
+                    gpa: item.querySelector('.edu-gpa').value || ''
+                });
+            });
+
+            // Collect certificates data
+            document.querySelectorAll('#certificatesContainer .dynamic-item').forEach(item => {
+                data.certificates.push({
+                    name: item.querySelector('.cert-name').value || '',
+                    issuer: item.querySelector('.cert-issuer').value || '',
+                    date: item.querySelector('.cert-date').value || ''
+                });
+            });
+
+            // Collect languages data
+            document.querySelectorAll('#languagesContainer .dynamic-item').forEach(item => {
+                data.languages.push({
+                    name: item.querySelector('.lang-name').value || '',
+                    level: item.querySelector('.lang-level').value || ''
+                });
+            });
+
+            return data;
+        }
+
+        // Save data to database
+        function saveToDatabase(userData) {
+            if (!currentCvId) {
+                currentCvId = userData.id;
+                cvDatabase.push(userData);
+            } else {
+                const index = cvDatabase.findIndex(cv => cv.id === currentCvId);
+                if (index !== -1) {
+                    cvDatabase[index] = userData;
+                } else {
+                    cvDatabase.push(userData);
+                }
+            }
+
+            console.log('Data saved to database:', userData.personalInfo.fullName || 'Unnamed CV');
+        }
+
+        // Export database to Excel
+        function exportToExcel() {
+            if (cvDatabase.length === 0) {
+                alert('لا توجد بيانات في قاعدة البيانات للتصدير');
+                return;
+            }
+
+            try {
+                const workbook = XLSX.utils.book_new();
+                
+                // Create summary sheet
+                const summaryData = [
+                    ['تقرير قاعدة البيانات - السير الذاتية'],
+                    ['تاريخ التصدير:', new Date().toLocaleDateString('ar-SA')],
+                    ['عدد السير الذاتية:', cvDatabase.length],
+                    [''],
+                    ['الاسم', 'المسمى الوظيفي', 'البريد الإلكتروني', 'رقم الهاتف', 'المدينة', 'تاريخ الإنشاء']
+                ];
+
+                cvDatabase.forEach(cv => {
+                    summaryData.push([
+                        cv.personalInfo.fullName || 'غير محدد',
+                        cv.personalInfo.jobTitle || 'غير محدد',
+                        cv.personalInfo.email || 'غير محدد',
+                        cv.personalInfo.phone || 'غير محدد',
+                        cv.personalInfo.city || 'غير محدد',
+                        new Date(cv.timestamp).toLocaleDateString('ar-SA')
+                    ]);
+                });
+
+                const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+                XLSX.utils.book_append_sheet(workbook, summarySheet, 'ملخص قاعدة البيانات');
+
+                // Generate Excel file
+                const fileName = `CV_Database_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(workbook, fileName);
+                
+                alert(`تم تصدير قاعدة البيانات بنجاح!\nاسم الملف: ${fileName}\nعدد السير الذاتية: ${cvDatabase.length}`);
+                
+            } catch (error) {
+                console.error('Error exporting to Excel:', error);
+                alert('حدث خطأ في تصدير البيانات. يرجى المحاولة مرة أخرى.');
+            }
+        }
+
+        // View database statistics
+        function viewDatabaseStats() {
+            const stats = {
+                total: cvDatabase.length,
+                withEmail: cvDatabase.filter(cv => cv.personalInfo.email).length,
+                withPhone: cvDatabase.filter(cv => cv.personalInfo.phone).length,
+                withExperience: cvDatabase.filter(cv => cv.experience.length > 0).length
+            };
+
+            let message = `📊 إحصائيات قاعدة البيانات:\n\n`;
+            message += `📋 إجمالي السير الذاتية: ${stats.total}\n`;
+            message += `📧 لديها بريد إلكتروني: ${stats.withEmail}\n`;
+            message += `📱 لديها رقم هاتف: ${stats.withPhone}\n`;
+            message += `💼 لديها خبرة عملية: ${stats.withExperience}\n`;
+
+            alert(message);
+        }
+
+        // Calculate ATS Score
+        function calculateATSScore() {
+            let score = 0;
+
+            // Personal info checks
+            if (document.getElementById('fullName').value.length > 5) {
+                score += 10;
+            }
+            if (document.getElementById('email').value.includes('@')) {
+                score += 10;
+            }
+            if (document.getElementById('phone').value.length > 10) {
+                score += 10;
+            }
+
+            // Professional summary check
+            const summary = document.getElementById('summary').value;
+            if (summary.length > 50 && summary.length < 300) {
+                score += 15;
+            }
+
+            // Experience checks
+            const expItems = document.querySelectorAll('#experienceContainer .dynamic-item');
+            if (expItems.length >= 1) {
+                score += 15;
+            }
+
+            // Skills checks
+            const skillsFields = ['programmingLanguages', 'frameworks', 'databases', 'tools'];
+            let skillsCount = 0;
+            skillsFields.forEach(field => {
+                if (document.getElementById(field).value.length > 5) {
+                    skillsCount++;
+                }
+            });
+            if (skillsCount >= 3) {
+                score += 20;
+            }
+
+            // Education check
+            const eduItems = document.querySelectorAll('#educationContainer .dynamic-item');
+            if (eduItems.length >= 1) {
+                score += 10;
+            }
+
+            // Keywords density check
+            const keywordInputs = document.querySelectorAll('.keywords-input');
+            let hasKeywords = false;
+            keywordInputs.forEach(input => {
+                if (input.value.length > 20) {
+                    hasKeywords = true;
+                }
+            });
+            if (hasKeywords) {
+                score += 10;
+            }
+
+            // Update score display
+            const scoreElement = document.getElementById('scoreValue');
+            const scoreTextElement = document.getElementById('scoreText');
+            const atsScoreElement = document.getElementById('atsScore');
+
+            scoreElement.textContent = score + '%';
+
+            if (score >= 80) {
+                scoreTextElement.textContent = 'ممتاز - جاهز للإرسال';
+                atsScoreElement.className = 'ats-score';
+            } else if (score >= 60) {
+                scoreTextElement.textContent = 'جيد - يحتاج تحسينات طفيفة';
+                atsScoreElement.className = 'ats-score score-medium';
+            } else {
+                scoreTextElement.textContent = 'يحتاج تحسين - أكمل البيانات الناقصة';
+                atsScoreElement.className = 'ats-score score-bad';
+            }
+        }
+
+        // Update preview function
+        function updatePreview() {
+            try {
+                // Personal Info
+                document.getElementById('previewName').textContent = 
+                    document.getElementById('fullName').value || 'Your Full Name';
+                document.getElementById('previewTitle').textContent = 
+                    document.getElementById('jobTitle').value || 'Job Title';
+
+                // Contact Info
+                const contactDiv = document.getElementById('previewContact');
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const city = document.getElementById('city').value;
+                const country = document.getElementById('country').value;
+                const linkedin = document.getElementById('linkedin').value;
+
+                let contactHTML = '';
+                if (email) contactHTML += `<div>Email: ${email}</div>`;
+                if (phone) contactHTML += `<div>Phone: ${phone}</div>`;
+                if (city || country) contactHTML += `<div>Location: ${city ? city + ', ' : ''}${country}</div>`;
+                if (linkedin) contactHTML += `<div>LinkedIn: ${linkedin}</div>`;
+                
+                contactDiv.innerHTML = contactHTML || '<div>Contact information will appear here</div>';
+
+                // Summary
+                document.getElementById('previewSummary').textContent = 
+                    document.getElementById('summary').value || 'Professional summary will appear here...';
+
+                // Experience
+                updateExperiencePreview();
+                
+                // Education
+                updateEducationPreview();
+                
+                // Skills
+                updateSkillsPreview();
+                
+                // Certificates
+                updateCertificatesPreview();
+
+                // Languages
+                updateLanguagesPreview();
+            } catch (error) {
+                console.error('Error updating preview:', error);
+            }
+        }
+
+        function updateExperiencePreview() {
+            const experienceContainer = document.getElementById('previewExperience');
+            const experienceItems = document.querySelectorAll('#experienceContainer .dynamic-item');
+            
+            let html = '';
+            experienceItems.forEach(item => {
+                const title = item.querySelector('.exp-title').value;
+                const company = item.querySelector('.exp-company').value;
+                const location = item.querySelector('.exp-location').value;
+                const startDate = item.querySelector('.exp-start').value;
+                const endDate = item.querySelector('.exp-end').value;
+                const desc = item.querySelector('.exp-desc').value;
+                
+                if (title || company) {
+                    html += `
+                        <div class="cv-item">
+                            <h4>${title || 'Job Title'}</h4>
+                            <div class="meta">${company || 'Company Name'} | ${location || 'Location'} | ${startDate || 'Start'} - ${endDate || 'End'}</div>
+                            <div style="white-space: pre-line;">${desc || 'Job description and achievements'}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            experienceContainer.innerHTML = html || '<p>Professional experience will appear here</p>';
+        }
+
+        function updateEducationPreview() {
+            const educationContainer = document.getElementById('previewEducation');
+            const educationItems = document.querySelectorAll('#educationContainer .dynamic-item');
+            
+            let html = '';
+            educationItems.forEach(item => {
+                const degree = item.querySelector('.edu-degree').value;
+                const school = item.querySelector('.edu-school').value;
+                const location = item.querySelector('.edu-location').value;
+                const year = item.querySelector('.edu-year').value;
+                const gpa = item.querySelector('.edu-gpa').value;
+                
+                if (degree || school) {
+                    html += `
+                        <div class="cv-item">
+                            <h4>${degree || 'Degree'}</h4>
+                            <div class="meta">${school || 'Institution'} | ${location || 'Location'} | ${year || 'Year'}</div>
+                            ${gpa ? `<p>Grade: ${gpa}</p>` : ''}
+                        </div>
+                    `;
+                }
+            });
+            
+            educationContainer.innerHTML = html || '<p>Education information will appear here</p>';
+        }
+
+        function updateSkillsPreview() {
+            const skillsContainer = document.getElementById('previewSkills');
+            const skills = {
+                'Programming Languages': document.getElementById('programmingLanguages').value,
+                'Frameworks & Libraries': document.getElementById('frameworks').value,
+                'Databases': document.getElementById('databases').value,
+                'Tools & Technologies': document.getElementById('tools').value,
+                'Additional Skills': document.getElementById('additionalSkills').value
+            };
+            
+            let skillsHTML = '';
+            Object.entries(skills).forEach(([category, skillList]) => {
+                if (skillList.trim()) {
+                    skillsHTML += `<p><strong>${category}:</strong> ${skillList}</p>`;
+                }
+            });
+            
+            skillsContainer.innerHTML = skillsHTML || '<p>Technical skills will appear here</p>';
+        }
+
+        function updateCertificatesPreview() {
+            const certificatesContainer = document.getElementById('previewCertificates');
+            const certificatesSection = document.getElementById('certificatesSection');
+            const certificateItems = document.querySelectorAll('#certificatesContainer .dynamic-item');
+            
+            let html = '';
+            let hasCertificates = false;
+            
+            certificateItems.forEach(item => {
+                const name = item.querySelector('.cert-name').value;
+                const issuer = item.querySelector('.cert-issuer').value;
+                const date = item.querySelector('.cert-date').value;
+                
+                if (name || issuer) {
+                    hasCertificates = true;
+                    html += `
+                        <div class="cv-item">
+                            <h4>${name || 'Certificate Name'}</h4>
+                            <div class="meta">${issuer || 'Issuing Organization'} | ${date || 'Date'}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (hasCertificates) {
+                certificatesContainer.innerHTML = html;
+                certificatesSection.style.display = 'block';
+            } else {
+                certificatesSection.style.display = 'none';
+            }
+        }
+
+        function updateLanguagesPreview() {
+            const languagesContainer = document.getElementById('previewLanguages');
+            const languagesSection = document.getElementById('languagesSection');
+            const languageItems = document.querySelectorAll('#languagesContainer .dynamic-item');
+            
+            let html = '';
+            let hasLanguages = false;
+            
+            languageItems.forEach(item => {
+                const name = item.querySelector('.lang-name').value;
+                const level = item.querySelector('.lang-level').value;
+                
+                if (name) {
+                    hasLanguages = true;
+                    html += `<p><strong>${name}:</strong> ${level}</p>`;
+                }
+            });
+            
+            if (hasLanguages) {
+                languagesContainer.innerHTML = html;
+                languagesSection.style.display = 'block';
+            } else {
+                languagesSection.style.display = 'none';
+            }
+        }
+
+        // Dynamic section management
+        function addExperience() {
+            addDynamicItem('experienceContainer', 'experience', `
+                <div class="form-group">
+                    <label>المسمى الوظيفي</label>
+                    <input type="text" class="exp-title" placeholder="مطور ويب أول">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>اسم الشركة</label>
+                        <input type="text" class="exp-company" placeholder="شركة التقنيات المتقدمة">
+                    </div>
+                    <div class="form-group">
+                        <label>المدينة</label>
+                        <input type="text" class="exp-location" placeholder="الرياض">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>تاريخ البداية</label>
+                        <input type="text" class="exp-start" placeholder="يناير 2020">
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ النهاية</label>
+                        <input type="text" class="exp-end" placeholder="الحاضر">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>المهام والإنجازات <span class="label-hint">(كل نقطة في سطر منفصل)</span></label>
+                    <textarea class="exp-desc keywords-input" placeholder="• طوّرت تطبيق ويب بتقنية React زاد المبيعات بنسبة 25%&#10;• قدت فريق من 3 مطورين لإنجاز 5 مشاريع في الوقت المحدد"></textarea>
+                </div>
+            `);
+        }
+
+        function addEducation() {
+            addDynamicItem('educationContainer', 'education', `
+                <div class="form-group">
+                    <label>الدرجة العلمية</label>
+                    <input type="text" class="edu-degree" placeholder="بكالوريوس علوم الحاسب">
+                </div>
+                <div class="form-group">
+                    <label>اسم الجامعة/المؤسسة</label>
+                    <input type="text" class="edu-school" placeholder="جامعة الملك سعود">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>المدينة</label>
+                        <input type="text" class="edu-location" placeholder="الرياض">
+                    </div>
+                    <div class="form-group">
+                        <label>سنة التخرج</label>
+                        <input type="text" class="edu-year" placeholder="2020">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>التقدير/المعدل <span class="label-hint">(اختياري)</span></label>
+                    <input type="text" class="edu-gpa" placeholder="امتياز / 3.8 من 4.0">
+                </div>
+            `);
+        }
+
+        function addCertificate() {
+            addDynamicItem('certificatesContainer', 'certificate', `
+                <div class="form-group">
+                    <label>اسم الشهادة</label>
+                    <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الجهة المانحة</label>
+                        <input type="text" class="cert-issuer" placeholder="Amazon Web Services">
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ الحصول</label>
+                        <input type="text" class="cert-date" placeholder="سبتمبر 2023">
+                    </div>
+                </div>
+            `);
+        }
+
+        function addLanguage() {
+            addDynamicItem('languagesContainer', 'language', `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>اللغة</label>
+                        <input type="text" class="lang-name" placeholder="الإنجليزية">
+                    </div>
+                    <div class="form-group">
+                        <label>مستوى الإتقان</label>
+                        <select class="lang-level">
+                            <option value="مبتدئ">مبتدئ</option>
+                            <option value="متوسط">متوسط</option>
+                            <option value="متقدم">متقدم</option>
+                            <option value="طلق">طلق</option>
+                            <option value="لغة أم">لغة أم</option>
+                        </select>
+                    </div>
+                </div>
+            `);
+        }
+
+        function addDynamicItem(containerId, type, content) {
+            const container = document.getElementById(containerId);
+            const newItem = document.createElement('div');
+            newItem.className = 'dynamic-item';
+            newItem.setAttribute('data-type', type);
+            newItem.innerHTML = `
+                <button class="remove-btn" onclick="removeItem(this)">×</button>
+                ${content}
+            `;
+            container.appendChild(newItem);
+            
+            // Add event listeners to new inputs
+            const newInputs = newItem.querySelectorAll('input, textarea, select');
+            newInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updatePreview();
+                    calculateATSScore();
+                    autoSaveToDatabase();
+                });
+            });
+        }
+
+        function removeItem(button) {
+            const item = button.closest('.dynamic-item');
+            item.remove();
+            updatePreview();
+            calculateATSScore();
+            autoSaveToDatabase();
+        }
+
+        function clearForm() {
+            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
+                document.querySelectorAll('input, textarea, select').forEach(input => {
+                    input.value = '';
+                });
+                
+                // Reset dynamic sections to have one item each
+                resetDynamicSections();
+                
+                currentCvId = null;
+                updatePreview();
+                calculateATSScore();
+            }
+        }
+
+        function resetDynamicSections() {
+            const containers = ['experienceContainer', 'educationContainer', 'certificatesContainer', 'languagesContainer'];
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                const items = container.querySelectorAll('.dynamic-item');
+                // Keep only the first item and clear its values
+                items.forEach((item, index) => {
+                    if (index === 0) {
+                        item.querySelectorAll('input, textarea, select').forEach(input => {
+                            input.value = '';
+                        });
+                    } else {
+                        item.remove();
+                    }
+                });
+            });
+        }
+
+        function loadFromDatabase() {
+            if (!cvDatabase) {
+                cvDatabase = [];
+            }
+        }
+
+        function loadExistingData() {
+            // This function can be enhanced to load specific CV data
+        }
+
+        async function generatePDF() {
+            const loadingDiv = document.getElementById('loadingDiv');
+            const cvPreview = document.getElementById('cvPreview');
+            
+            try {
+                // Show loading
+                loadingDiv.style.display = 'block';
+                
+                // Force update preview before PDF generation
+                updatePreview();
+                
+                // Wait a moment to ensure all updates are applied
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Save current data to database before generating PDF
+                const userData = collectAllData();
+                if (userData.personalInfo.fullName || userData.personalInfo.email) {
+                    saveToDatabase(userData);
+                }
+                
+                // Check if the preview has content
+                const previewName = document.getElementById('previewName').textContent;
+                if (!previewName || previewName === 'Your Full Name') {
+                    alert('يرجى ملء البيانات الأساسية أولاً (الاسم والمعلومات الشخصية)');
+                    loadingDiv.style.display = 'none';
+                    return;
+                }
+                
+                // Configure PDF options for better ATS compatibility
+                const opt = {
+                    margin: [0.5, 0.5, 0.5, 0.5],
+                    filename: `CV_${userData.personalInfo.fullName || 'Resume'}_${new Date().toISOString().split('T')[0]}.pdf`,
+                    image: { 
+                        type: 'jpeg', 
+                        quality: 1.0
+                    },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        letterRendering: true,
+                        allowTaint: false,
+                        backgroundColor: '#ffffff',
+                        logging: false
+                    },
+                    jsPDF: { 
+                        unit: 'in', 
+                        format: 'a4', 
+                        orientation: 'portrait',
+                        compress: false
+                    }
+                };
+
+                // Generate PDF using html2pdf
+                await html2pdf().set(opt).from(cvPreview).save();
+                
+                alert('تم تحميل السيرة الذاتية بنجاح!\n\nالملف متوافق مع أنظمة ATS وتم حفظ البيانات في قاعدة البيانات.');
+                
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('حدث خطأ في إنشاء ملف PDF. يرجى التأكد من ملء البيانات الأساسية والمحاولة مرة أخرى.');
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
