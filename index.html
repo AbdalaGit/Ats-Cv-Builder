@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُنشئ السيرة الذاتية المتوافق مع أنظمة ATS</title>
+    <title>منشئ السيرة الذاتية المتوافق مع أنظمة ATS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -193,10 +195,6 @@
             background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         }
 
-        .btn-excel {
-            background: linear-gradient(135deg, #217346 0%, #1a5e36 100%);
-        }
-
         .dynamic-section {
             border: 2px dashed #bdc3c7;
             border-radius: 10px;
@@ -242,12 +240,57 @@
             gap: 15px;
         }
 
+        /* Skills Section Styles */
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .skill-tag {
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .skill-tag .remove-skill {
+            margin-left: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .skill-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-input-group input {
+            flex: 1;
+        }
+
+        .skill-input-group button {
+            padding: 10px 20px;
+            white-space: nowrap;
+        }
+
         /* ATS-Friendly CV Preview Styles */
         .cv-preview {
             background: white;
             font-family: 'Arial', 'Helvetica', sans-serif;
-            font-size: 11pt;
-            line-height: 1.3;
+            font-size: 12pt;
+            line-height: 1.4;
             color: #000000;
             direction: ltr;
             max-width: 8.5in;
@@ -255,7 +298,7 @@
             padding: 0.75in;
             box-shadow: 0 0 20px rgba(0,0,0,0.15);
             border: 1px solid #ddd;
-            min-height: 11in; /* إضافة ارتفاع أدنى */
+            min-height: 11in;
         }
 
         .cv-header {
@@ -281,7 +324,7 @@
 
         .cv-contact {
             font-size: 11pt;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .cv-contact div {
@@ -323,7 +366,7 @@
             font-style: italic;
         }
 
-        .cv-item p, .cv-item ul {
+        .cv-item p, .cv-item ul, .cv-item div {
             font-size: 11pt;
             line-height: 1.4;
             margin-bottom: 6pt;
@@ -331,10 +374,12 @@
 
         .cv-item ul {
             padding-right: 20pt;
+            margin-bottom: 8pt;
         }
 
         .cv-item li {
-            margin-bottom: 3pt;
+            margin-bottom: 4pt;
+            list-style-type: disc;
         }
 
         .skills-list {
@@ -422,20 +467,6 @@
             color: #27ae60;
         }
 
-        .database-section {
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .database-section h3 {
-            color: #1976d2;
-            margin-bottom: 15px;
-        }
-
         /* Responsive Design */
         @media (max-width: 1200px) {
             .main-content {
@@ -470,6 +501,10 @@
             .cv-name {
                 font-size: 18pt;
             }
+
+            .skill-input-group {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 480px) {
@@ -489,6 +524,24 @@
             .preview-section {
                 padding: 20px;
             }
+
+            .cv-preview {
+                padding: 0.3in;
+                font-size: 9pt;
+                min-height: auto;
+            }
+
+            .cv-name {
+                font-size: 16pt;
+            }
+
+            .cv-title {
+                font-size: 12pt;
+            }
+
+            .cv-section h3 {
+                font-size: 12pt;
+            }
         }
 
         /* Print styles for better PDF output */
@@ -502,6 +555,12 @@
                 border: none;
                 margin: 0;
                 padding: 0.75in;
+                font-size: 11pt !important;
+            }
+
+            .cv-preview * {
+                color: #000 !important;
+                background: transparent !important;
             }
         }
     </style>
@@ -509,24 +568,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>مُنشئ السيرة الذاتية المتوافق مع أنظمة ATS</h1>
+            <h1>منشئ السيرة الذاتية المتوافق مع أنظمة ATS</h1>
             <p>أنشئ سيرتك الذاتية بتنسيق احترافي يمر عبر أنظمة الفحص الآلي بنجاح 100%</p>
             <div class="ats-warning">
-                ⚠️ هذا المُنشئ يلتزم بمعايير ATS الصارمة - بدون ألوان، رسوم، أو تعقيدات تقنية
+                ⚠️ هذا المنشئ يلتزم بمعايير ATS الصارمة - بدون ألوان، رسوم، أو تعقيدات تقنية
             </div>
         </div>
 
         <div class="main-content">
             <!-- Form Section -->
             <div class="form-section">
-                <!-- Database Section -->
-                <!-- <div class="database-section">
-                    <h3>📊 قاعدة البيانات</h3>
-                    <p>جميع البيانات يتم حفظها تلقائياً في ملف Excel</p>
-                    <button class="btn btn-excel" onclick="exportToExcel()">📋 تصدير قاعدة البيانات Excel</button>
-                    <button class="btn btn-secondary" onclick="viewDatabaseStats()">📈 إحصائيات قاعدة البيانات</button>
-                </div> -->
-
                 <!-- ATS Score -->
                 <div class="ats-score" id="atsScore">
                     📊 درجة توافق ATS: <span id="scoreValue">85%</span>
@@ -655,34 +706,21 @@
                 </div>
                 <button class="btn btn-secondary" onclick="addEducation()">إضافة تعليم</button>
 
-                <div class="section-title">المهارات التقنية</div>
+                <div class="section-title">المهارات</div>
                 <div class="pro-tip">
                     <strong>مهم جداً لـ ATS:</strong> اكتب المهارات بأسمائها الدقيقة كما تظهر في إعلان الوظيفة
                 </div>
                 
                 <div class="form-group">
-                    <label>لغات البرمجة</label>
-                    <input type="text" id="programmingLanguages" placeholder="JavaScript, Python, Java, C#" class="keywords-input">
+                    <label>إضافة مهارة جديدة</label>
+                    <div class="skill-input-group">
+                        <input type="text" id="newSkillInput" placeholder="JavaScript" onkeypress="handleSkillKeyPress(event)">
+                        <button type="button" class="btn btn-secondary" onclick="addSkill()">إضافة</button>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label>الأطر والمكتبات (Frameworks)</label>
-                    <input type="text" id="frameworks" placeholder="React.js, Node.js, Express.js, Angular, Vue.js" class="keywords-input">
-                </div>
-
-                <div class="form-group">
-                    <label>قواعد البيانات</label>
-                    <input type="text" id="databases" placeholder="MySQL, MongoDB, PostgreSQL, Redis" class="keywords-input">
-                </div>
-
-                <div class="form-group">
-                    <label>الأدوات والتقنيات</label>
-                    <input type="text" id="tools" placeholder="Git, Docker, AWS, Jenkins, Kubernetes" class="keywords-input">
-                </div>
-
-                <div class="form-group">
-                    <label>مهارات إضافية</label>
-                    <input type="text" id="additionalSkills" placeholder="Agile, Scrum, API Design, Microservices" class="keywords-input">
+                
+                <div id="skillsDisplay" class="skills-container">
+                    <!-- Skills will be displayed here as tags -->
                 </div>
 
                 <div class="section-title">الشهادات المهنية</div>
@@ -722,7 +760,7 @@
                                     <option value="مبتدئ">مبتدئ</option>
                                     <option value="متوسط">متوسط</option>
                                     <option value="متقدم">متقدم</option>
-                                    <option value="طلق">طلق</option>
+                                    <option value="طليق">طليق</option>
                                     <option value="لغة أم">لغة أم</option>
                                 </select>
                             </div>
@@ -735,7 +773,6 @@
                     <button class="btn btn-success" onclick="generatePDF()" style="font-size: 1.1rem; padding: 16px 32px;">
                         📄 تحميل السيرة الذاتية PDF
                     </button>
-                    <button class="btn" onclick="updatePreview()">🔄 تحديث المعاينة</button>
                     <button class="btn btn-secondary" onclick="clearForm()">🗑️ مسح البيانات</button>
                 </div>
 
@@ -752,7 +789,6 @@
             <div class="preview-section">
                 <div class="download-section">
                     <button class="btn btn-success" onclick="generatePDF()">📄 تحميل PDF</button>
-                    <button class="btn" onclick="updatePreview()">🔄 تحديث</button>
                 </div>
                 
                 <div class="cv-preview" id="cvPreview">
@@ -787,20 +823,20 @@
                         </div>
 
                         <div class="cv-section" id="skillsSection">
-                            <h3>TECHNICAL SKILLS</h3>
-                            <div id="previewSkills">
+                            <h3>SKILLS</h3>
+                            <div id="previewSkills" class="skills-list">
                                 <!-- Skills will be populated by JavaScript -->
                             </div>
                         </div>
 
-                        <div class="cv-section" id="certificatesSection" style="display: none;">
+                        <div class="cv-section" id="certificatesSection">
                             <h3>CERTIFICATIONS</h3>
                             <div id="previewCertificates">
                                 <!-- Certificates will be populated by JavaScript -->
                             </div>
                         </div>
 
-                        <div class="cv-section" id="languagesSection" style="display: none;">
+                        <div class="cv-section" id="languagesSection">
                             <h3>LANGUAGES</h3>
                             <div id="previewLanguages">
                                 <!-- Languages will be populated by JavaScript -->
@@ -812,686 +848,702 @@
         </div>
     </div>
 
-    <!-- Include SheetJS for Excel functionality -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
-        // Database to store all user data
-        let cvDatabase = [];
-        let currentCvId = null;
+        // Global variables
+        let skills = [];
 
-        // Initialize the form
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            loadFromDatabase();
+            setupEventListeners();
             updatePreview();
-            calculateATSScore();
-            
-            // Add event listeners for real-time updates
-            const inputs = document.querySelectorAll('input, textarea, select');
-            inputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    updatePreview();
-                    calculateATSScore();
-                    autoSaveToDatabase();
-                });
-            });
-
-            // Load existing data from database if available
-            loadExistingData();
         });
 
-        // Auto-save to database every time user types
-        function autoSaveToDatabase() {
-            const userData = collectAllData();
-            if (userData.personalInfo.fullName || userData.personalInfo.email) {
-                saveToDatabase(userData);
-            }
-        }
-
-        // Collect all form data
-        function collectAllData() {
-            const data = {
-                id: currentCvId || Date.now(),
-                timestamp: new Date().toISOString(),
-                personalInfo: {
-                    fullName: document.getElementById('fullName').value || '',
-                    jobTitle: document.getElementById('jobTitle').value || '',
-                    email: document.getElementById('email').value || '',
-                    phone: document.getElementById('phone').value || '',
-                    city: document.getElementById('city').value || '',
-                    country: document.getElementById('country').value || '',
-                    linkedin: document.getElementById('linkedin').value || '',
-                    summary: document.getElementById('summary').value || ''
-                },
-                experience: [],
-                education: [],
-                skills: {
-                    programmingLanguages: document.getElementById('programmingLanguages').value || '',
-                    frameworks: document.getElementById('frameworks').value || '',
-                    databases: document.getElementById('databases').value || '',
-                    tools: document.getElementById('tools').value || '',
-                    additionalSkills: document.getElementById('additionalSkills').value || ''
-                },
-                certificates: [],
-                languages: []
-            };
-
-            // Collect experience data
-            document.querySelectorAll('#experienceContainer .dynamic-item').forEach(item => {
-                data.experience.push({
-                    title: item.querySelector('.exp-title').value || '',
-                    company: item.querySelector('.exp-company').value || '',
-                    location: item.querySelector('.exp-location').value || '',
-                    startDate: item.querySelector('.exp-start').value || '',
-                    endDate: item.querySelector('.exp-end').value || '',
-                    description: item.querySelector('.exp-desc').value || ''
-                });
-            });
-
-            // Collect education data
-            document.querySelectorAll('#educationContainer .dynamic-item').forEach(item => {
-                data.education.push({
-                    degree: item.querySelector('.edu-degree').value || '',
-                    school: item.querySelector('.edu-school').value || '',
-                    location: item.querySelector('.edu-location').value || '',
-                    year: item.querySelector('.edu-year').value || '',
-                    gpa: item.querySelector('.edu-gpa').value || ''
-                });
-            });
-
-            // Collect certificates data
-            document.querySelectorAll('#certificatesContainer .dynamic-item').forEach(item => {
-                data.certificates.push({
-                    name: item.querySelector('.cert-name').value || '',
-                    issuer: item.querySelector('.cert-issuer').value || '',
-                    date: item.querySelector('.cert-date').value || ''
-                });
-            });
-
-            // Collect languages data
-            document.querySelectorAll('#languagesContainer .dynamic-item').forEach(item => {
-                data.languages.push({
-                    name: item.querySelector('.lang-name').value || '',
-                    level: item.querySelector('.lang-level').value || ''
-                });
-            });
-
-            return data;
-        }
-
-        // Save data to database
-        function saveToDatabase(userData) {
-            if (!currentCvId) {
-                currentCvId = userData.id;
-                cvDatabase.push(userData);
-            } else {
-                const index = cvDatabase.findIndex(cv => cv.id === currentCvId);
-                if (index !== -1) {
-                    cvDatabase[index] = userData;
-                } else {
-                    cvDatabase.push(userData);
-                }
-            }
-
-            console.log('Data saved to database:', userData.personalInfo.fullName || 'Unnamed CV');
-        }
-
-        // Export database to Excel
-        function exportToExcel() {
-            if (cvDatabase.length === 0) {
-                alert('لا توجد بيانات في قاعدة البيانات للتصدير');
-                return;
-            }
-
-            try {
-                const workbook = XLSX.utils.book_new();
-                
-                // Create summary sheet
-                const summaryData = [
-                    ['تقرير قاعدة البيانات - السير الذاتية'],
-                    ['تاريخ التصدير:', new Date().toLocaleDateString('ar-SA')],
-                    ['عدد السير الذاتية:', cvDatabase.length],
-                    [''],
-                    ['الاسم', 'المسمى الوظيفي', 'البريد الإلكتروني', 'رقم الهاتف', 'المدينة', 'تاريخ الإنشاء']
-                ];
-
-                cvDatabase.forEach(cv => {
-                    summaryData.push([
-                        cv.personalInfo.fullName || 'غير محدد',
-                        cv.personalInfo.jobTitle || 'غير محدد',
-                        cv.personalInfo.email || 'غير محدد',
-                        cv.personalInfo.phone || 'غير محدد',
-                        cv.personalInfo.city || 'غير محدد',
-                        new Date(cv.timestamp).toLocaleDateString('ar-SA')
-                    ]);
-                });
-
-                const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
-                XLSX.utils.book_append_sheet(workbook, summarySheet, 'ملخص قاعدة البيانات');
-
-                // Generate Excel file
-                const fileName = `CV_Database_${new Date().toISOString().split('T')[0]}.xlsx`;
-                XLSX.writeFile(workbook, fileName);
-                
-                alert(`تم تصدير قاعدة البيانات بنجاح!\nاسم الملف: ${fileName}\nعدد السير الذاتية: ${cvDatabase.length}`);
-                
-            } catch (error) {
-                console.error('Error exporting to Excel:', error);
-                alert('حدث خطأ في تصدير البيانات. يرجى المحاولة مرة أخرى.');
-            }
-        }
-
-        // View database statistics
-        function viewDatabaseStats() {
-            const stats = {
-                total: cvDatabase.length,
-                withEmail: cvDatabase.filter(cv => cv.personalInfo.email).length,
-                withPhone: cvDatabase.filter(cv => cv.personalInfo.phone).length,
-                withExperience: cvDatabase.filter(cv => cv.experience.length > 0).length
-            };
-
-            let message = `📊 إحصائيات قاعدة البيانات:\n\n`;
-            message += `📋 إجمالي السير الذاتية: ${stats.total}\n`;
-            message += `📧 لديها بريد إلكتروني: ${stats.withEmail}\n`;
-            message += `📱 لديها رقم هاتف: ${stats.withPhone}\n`;
-            message += `💼 لديها خبرة عملية: ${stats.withExperience}\n`;
-
-            alert(message);
-        }
-
-        // Calculate ATS Score
-        function calculateATSScore() {
-            let score = 0;
-
-            // Personal info checks
-            if (document.getElementById('fullName').value.length > 5) {
-                score += 10;
-            }
-            if (document.getElementById('email').value.includes('@')) {
-                score += 10;
-            }
-            if (document.getElementById('phone').value.length > 10) {
-                score += 10;
-            }
-
-            // Professional summary check
-            const summary = document.getElementById('summary').value;
-            if (summary.length > 50 && summary.length < 300) {
-                score += 15;
-            }
-
-            // Experience checks
-            const expItems = document.querySelectorAll('#experienceContainer .dynamic-item');
-            if (expItems.length >= 1) {
-                score += 15;
-            }
-
-            // Skills checks
-            const skillsFields = ['programmingLanguages', 'frameworks', 'databases', 'tools'];
-            let skillsCount = 0;
-            skillsFields.forEach(field => {
-                if (document.getElementById(field).value.length > 5) {
-                    skillsCount++;
+        // Setup event listeners for live updates
+        function setupEventListeners() {
+            // Personal info fields
+            const personalFields = ['fullName', 'jobTitle', 'email', 'phone', 'city', 'country', 'linkedin', 'summary'];
+            personalFields.forEach(field => {
+                const element = document.getElementById(field);
+                if (element) {
+                    element.addEventListener('input', updatePreview);
                 }
             });
-            if (skillsCount >= 3) {
-                score += 20;
-            }
 
-            // Education check
-            const eduItems = document.querySelectorAll('#educationContainer .dynamic-item');
-            if (eduItems.length >= 1) {
-                score += 10;
-            }
-
-            // Keywords density check
-            const keywordInputs = document.querySelectorAll('.keywords-input');
-            let hasKeywords = false;
-            keywordInputs.forEach(input => {
-                if (input.value.length > 20) {
-                    hasKeywords = true;
-                }
-            });
-            if (hasKeywords) {
-                score += 10;
-            }
-
-            // Update score display
-            const scoreElement = document.getElementById('scoreValue');
-            const scoreTextElement = document.getElementById('scoreText');
-            const atsScoreElement = document.getElementById('atsScore');
-
-            scoreElement.textContent = score + '%';
-
-            if (score >= 80) {
-                scoreTextElement.textContent = 'ممتاز - جاهز للإرسال';
-                atsScoreElement.className = 'ats-score';
-            } else if (score >= 60) {
-                scoreTextElement.textContent = 'جيد - يحتاج تحسينات طفيفة';
-                atsScoreElement.className = 'ats-score score-medium';
-            } else {
-                scoreTextElement.textContent = 'يحتاج تحسين - أكمل البيانات الناقصة';
-                atsScoreElement.className = 'ats-score score-bad';
-            }
-        }
-
-        // Update preview function
-        function updatePreview() {
-            try {
-                // Personal Info
-                document.getElementById('previewName').textContent = 
-                    document.getElementById('fullName').value || 'Your Full Name';
-                document.getElementById('previewTitle').textContent = 
-                    document.getElementById('jobTitle').value || 'Job Title';
-
-                // Contact Info
-                const contactDiv = document.getElementById('previewContact');
-                const email = document.getElementById('email').value;
-                const phone = document.getElementById('phone').value;
-                const city = document.getElementById('city').value;
-                const country = document.getElementById('country').value;
-                const linkedin = document.getElementById('linkedin').value;
-
-                let contactHTML = '';
-                if (email) contactHTML += `<div>Email: ${email}</div>`;
-                if (phone) contactHTML += `<div>Phone: ${phone}</div>`;
-                if (city || country) contactHTML += `<div>Location: ${city ? city + ', ' : ''}${country}</div>`;
-                if (linkedin) contactHTML += `<div>LinkedIn: ${linkedin}</div>`;
-                
-                contactDiv.innerHTML = contactHTML || '<div>Contact information will appear here</div>';
-
-                // Summary
-                document.getElementById('previewSummary').textContent = 
-                    document.getElementById('summary').value || 'Professional summary will appear here...';
-
-                // Experience
-                updateExperiencePreview();
-                
-                // Education
-                updateEducationPreview();
-                
-                // Skills
-                updateSkillsPreview();
-                
-                // Certificates
-                updateCertificatesPreview();
-
-                // Languages
-                updateLanguagesPreview();
-            } catch (error) {
-                console.error('Error updating preview:', error);
-            }
-        }
-
-        function updateExperiencePreview() {
-            const experienceContainer = document.getElementById('previewExperience');
-            const experienceItems = document.querySelectorAll('#experienceContainer .dynamic-item');
-            
-            let html = '';
-            experienceItems.forEach(item => {
-                const title = item.querySelector('.exp-title').value;
-                const company = item.querySelector('.exp-company').value;
-                const location = item.querySelector('.exp-location').value;
-                const startDate = item.querySelector('.exp-start').value;
-                const endDate = item.querySelector('.exp-end').value;
-                const desc = item.querySelector('.exp-desc').value;
-                
-                if (title || company) {
-                    html += `
-                        <div class="cv-item">
-                            <h4>${title || 'Job Title'}</h4>
-                            <div class="meta">${company || 'Company Name'} | ${location || 'Location'} | ${startDate || 'Start'} - ${endDate || 'End'}</div>
-                            <div style="white-space: pre-line;">${desc || 'Job description and achievements'}</div>
-                        </div>
-                    `;
-                }
-            });
-            
-            experienceContainer.innerHTML = html || '<p>Professional experience will appear here</p>';
-        }
-
-        function updateEducationPreview() {
-            const educationContainer = document.getElementById('previewEducation');
-            const educationItems = document.querySelectorAll('#educationContainer .dynamic-item');
-            
-            let html = '';
-            educationItems.forEach(item => {
-                const degree = item.querySelector('.edu-degree').value;
-                const school = item.querySelector('.edu-school').value;
-                const location = item.querySelector('.edu-location').value;
-                const year = item.querySelector('.edu-year').value;
-                const gpa = item.querySelector('.edu-gpa').value;
-                
-                if (degree || school) {
-                    html += `
-                        <div class="cv-item">
-                            <h4>${degree || 'Degree'}</h4>
-                            <div class="meta">${school || 'Institution'} | ${location || 'Location'} | ${year || 'Year'}</div>
-                            ${gpa ? `<p>Grade: ${gpa}</p>` : ''}
-                        </div>
-                    `;
-                }
-            });
-            
-            educationContainer.innerHTML = html || '<p>Education information will appear here</p>';
-        }
-
-        function updateSkillsPreview() {
-            const skillsContainer = document.getElementById('previewSkills');
-            const skills = {
-                'Programming Languages': document.getElementById('programmingLanguages').value,
-                'Frameworks & Libraries': document.getElementById('frameworks').value,
-                'Databases': document.getElementById('databases').value,
-                'Tools & Technologies': document.getElementById('tools').value,
-                'Additional Skills': document.getElementById('additionalSkills').value
-            };
-            
-            let skillsHTML = '';
-            Object.entries(skills).forEach(([category, skillList]) => {
-                if (skillList.trim()) {
-                    skillsHTML += `<p><strong>${category}:</strong> ${skillList}</p>`;
-                }
-            });
-            
-            skillsContainer.innerHTML = skillsHTML || '<p>Technical skills will appear here</p>';
-        }
-
-        function updateCertificatesPreview() {
-            const certificatesContainer = document.getElementById('previewCertificates');
-            const certificatesSection = document.getElementById('certificatesSection');
-            const certificateItems = document.querySelectorAll('#certificatesContainer .dynamic-item');
-            
-            let html = '';
-            let hasCertificates = false;
-            
-            certificateItems.forEach(item => {
-                const name = item.querySelector('.cert-name').value;
-                const issuer = item.querySelector('.cert-issuer').value;
-                const date = item.querySelector('.cert-date').value;
-                
-                if (name || issuer) {
-                    hasCertificates = true;
-                    html += `
-                        <div class="cv-item">
-                            <h4>${name || 'Certificate Name'}</h4>
-                            <div class="meta">${issuer || 'Issuing Organization'} | ${date || 'Date'}</div>
-                        </div>
-                    `;
-                }
-            });
-            
-            if (hasCertificates) {
-                certificatesContainer.innerHTML = html;
-                certificatesSection.style.display = 'block';
-            } else {
-                certificatesSection.style.display = 'none';
-            }
-        }
-
-        function updateLanguagesPreview() {
-            const languagesContainer = document.getElementById('previewLanguages');
-            const languagesSection = document.getElementById('languagesSection');
-            const languageItems = document.querySelectorAll('#languagesContainer .dynamic-item');
-            
-            let html = '';
-            let hasLanguages = false;
-            
-            languageItems.forEach(item => {
-                const name = item.querySelector('.lang-name').value;
-                const level = item.querySelector('.lang-level').value;
-                
-                if (name) {
-                    hasLanguages = true;
-                    html += `<p><strong>${name}:</strong> ${level}</p>`;
-                }
-            });
-            
-            if (hasLanguages) {
-                languagesContainer.innerHTML = html;
-                languagesSection.style.display = 'block';
-            } else {
-                languagesSection.style.display = 'none';
-            }
-        }
-
-        // Dynamic section management
-        function addExperience() {
-            addDynamicItem('experienceContainer', 'experience', `
-                <div class="form-group">
-                    <label>المسمى الوظيفي</label>
-                    <input type="text" class="exp-title" placeholder="مطور ويب أول">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>اسم الشركة</label>
-                        <input type="text" class="exp-company" placeholder="شركة التقنيات المتقدمة">
-                    </div>
-                    <div class="form-group">
-                        <label>المدينة</label>
-                        <input type="text" class="exp-location" placeholder="الرياض">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>تاريخ البداية</label>
-                        <input type="text" class="exp-start" placeholder="يناير 2020">
-                    </div>
-                    <div class="form-group">
-                        <label>تاريخ النهاية</label>
-                        <input type="text" class="exp-end" placeholder="الحاضر">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>المهام والإنجازات <span class="label-hint">(كل نقطة في سطر منفصل)</span></label>
-                    <textarea class="exp-desc keywords-input" placeholder="• طوّرت تطبيق ويب بتقنية React زاد المبيعات بنسبة 25%&#10;• قدت فريق من 3 مطورين لإنجاز 5 مشاريع في الوقت المحدد"></textarea>
-                </div>
-            `);
-        }
-
-        function addEducation() {
-            addDynamicItem('educationContainer', 'education', `
-                <div class="form-group">
-                    <label>الدرجة العلمية</label>
-                    <input type="text" class="edu-degree" placeholder="بكالوريوس علوم الحاسب">
-                </div>
-                <div class="form-group">
-                    <label>اسم الجامعة/المؤسسة</label>
-                    <input type="text" class="edu-school" placeholder="جامعة الملك سعود">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>المدينة</label>
-                        <input type="text" class="edu-location" placeholder="الرياض">
-                    </div>
-                    <div class="form-group">
-                        <label>سنة التخرج</label>
-                        <input type="text" class="edu-year" placeholder="2020">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>التقدير/المعدل <span class="label-hint">(اختياري)</span></label>
-                    <input type="text" class="edu-gpa" placeholder="امتياز / 3.8 من 4.0">
-                </div>
-            `);
-        }
-
-        function addCertificate() {
-            addDynamicItem('certificatesContainer', 'certificate', `
-                <div class="form-group">
-                    <label>اسم الشهادة</label>
-                    <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>الجهة المانحة</label>
-                        <input type="text" class="cert-issuer" placeholder="Amazon Web Services">
-                    </div>
-                    <div class="form-group">
-                        <label>تاريخ الحصول</label>
-                        <input type="text" class="cert-date" placeholder="سبتمبر 2023">
-                    </div>
-                </div>
-            `);
-        }
-
-        function addLanguage() {
-            addDynamicItem('languagesContainer', 'language', `
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>اللغة</label>
-                        <input type="text" class="lang-name" placeholder="الإنجليزية">
-                    </div>
-                    <div class="form-group">
-                        <label>مستوى الإتقان</label>
-                        <select class="lang-level">
-                            <option value="مبتدئ">مبتدئ</option>
-                            <option value="متوسط">متوسط</option>
-                            <option value="متقدم">متقدم</option>
-                            <option value="طلق">طلق</option>
-                            <option value="لغة أم">لغة أم</option>
-                        </select>
-                    </div>
-                </div>
-            `);
-        }
-
-        function addDynamicItem(containerId, type, content) {
-            const container = document.getElementById(containerId);
-            const newItem = document.createElement('div');
-            newItem.className = 'dynamic-item';
-            newItem.setAttribute('data-type', type);
-            newItem.innerHTML = `
-                <button class="remove-btn" onclick="removeItem(this)">×</button>
-                ${content}
-            `;
-            container.appendChild(newItem);
-            
-            // Add event listeners to new inputs
-            const newInputs = newItem.querySelectorAll('input, textarea, select');
-            newInputs.forEach(input => {
-                input.addEventListener('input', function() {
+            // Dynamic section fields
+            document.addEventListener('input', function(e) {
+                if (e.target.closest('.dynamic-item')) {
                     updatePreview();
-                    calculateATSScore();
-                    autoSaveToDatabase();
-                });
+                }
+            });
+
+            document.addEventListener('change', function(e) {
+                if (e.target.closest('.dynamic-item')) {
+                    updatePreview();
+                }
             });
         }
 
+        // Add skill function
+        function addSkill() {
+            const skillInput = document.getElementById('newSkillInput');
+            const skillText = skillInput.value.trim();
+            
+            if (skillText && !skills.includes(skillText)) {
+                skills.push(skillText);
+                skillInput.value = '';
+                displaySkills();
+                updatePreview();
+            }
+        }
+
+        // Handle Enter key press in skill input
+        function handleSkillKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addSkill();
+            }
+        }
+
+        // Display skills as tags
+        function displaySkills() {
+            const skillsDisplay = document.getElementById('skillsDisplay');
+            skillsDisplay.innerHTML = '';
+
+            skills.forEach((skill, index) => {
+                const skillTag = document.createElement('div');
+                skillTag.className = 'skill-tag';
+                skillTag.innerHTML = `${skill} <span class="remove-skill" onclick="removeSkill(${index})">×</span>`;
+                skillsDisplay.appendChild(skillTag);
+            });
+        }
+
+        // Remove skill
+        function removeSkill(index) {
+            skills.splice(index, 1);
+            displaySkills();
+            updatePreview();
+        }
+
+        // Add experience
+        function addExperience() {
+            const container = document.getElementById('experienceContainer');
+            const newItem = createDynamicItem('experience');
+            container.appendChild(newItem);
+            updatePreview();
+        }
+
+        // Add education
+        function addEducation() {
+            const container = document.getElementById('educationContainer');
+            const newItem = createDynamicItem('education');
+            container.appendChild(newItem);
+            updatePreview();
+        }
+
+        // Add certificate
+        function addCertificate() {
+            const container = document.getElementById('certificatesContainer');
+            const newItem = createDynamicItem('certificate');
+            container.appendChild(newItem);
+            updatePreview();
+        }
+
+        // Add language
+        function addLanguage() {
+            const container = document.getElementById('languagesContainer');
+            const newItem = createDynamicItem('language');
+            container.appendChild(newItem);
+            updatePreview();
+        }
+
+        // Create dynamic item
+        function createDynamicItem(type) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-item';
+            div.setAttribute('data-type', type);
+
+            let content = '';
+            
+            if (type === 'experience') {
+                content = `
+                    <button class="remove-btn" onclick="removeItem(this)">×</button>
+                    <div class="form-group">
+                        <label>المسمى الوظيفي</label>
+                        <input type="text" class="exp-title" placeholder="مطور ويب أول">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>اسم الشركة</label>
+                            <input type="text" class="exp-company" placeholder="شركة التقنيات المتقدمة">
+                        </div>
+                        <div class="form-group">
+                            <label>المدينة</label>
+                            <input type="text" class="exp-location" placeholder="الرياض">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>تاريخ البداية</label>
+                            <input type="text" class="exp-start" placeholder="يناير 2020">
+                        </div>
+                        <div class="form-group">
+                            <label>تاريخ النهاية</label>
+                            <input type="text" class="exp-end" placeholder="الحاضر">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>المهام والإنجازات</label>
+                        <textarea class="exp-desc keywords-input" placeholder="• طوّرت تطبيق ويب بتقنية React زاد المبيعات بنسبة 25%"></textarea>
+                    </div>
+                `;
+            } else if (type === 'education') {
+                content = `
+                    <button class="remove-btn" onclick="removeItem(this)">×</button>
+                    <div class="form-group">
+                        <label>الدرجة العلمية</label>
+                        <input type="text" class="edu-degree" placeholder="بكالوريوس علوم الحاسب">
+                    </div>
+                    <div class="form-group">
+                        <label>اسم الجامعة/المؤسسة</label>
+                        <input type="text" class="edu-school" placeholder="جامعة الملك سعود">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>المدينة</label>
+                            <input type="text" class="edu-location" placeholder="الرياض">
+                        </div>
+                        <div class="form-group">
+                            <label>سنة التخرج</label>
+                            <input type="text" class="edu-year" placeholder="2020">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>التقدير/المعدل <span class="label-hint">(اختياري)</span></label>
+                        <input type="text" class="edu-gpa" placeholder="امتياز / 3.8 من 4.0">
+                    </div>
+                `;
+            } else if (type === 'certificate') {
+                content = `
+                    <button class="remove-btn" onclick="removeItem(this)">×</button>
+                    <div class="form-group">
+                        <label>اسم الشهادة</label>
+                        <input type="text" class="cert-name" placeholder="AWS Certified Solutions Architect">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>الجهة المانحة</label>
+                            <input type="text" class="cert-issuer" placeholder="Amazon Web Services">
+                        </div>
+                        <div class="form-group">
+                            <label>تاريخ الحصول</label>
+                            <input type="text" class="cert-date" placeholder="سبتمبر 2023">
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'language') {
+                content = `
+                    <button class="remove-btn" onclick="removeItem(this)">×</button>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>اللغة</label>
+                            <input type="text" class="lang-name" placeholder="الإنجليزية">
+                        </div>
+                        <div class="form-group">
+                            <label>مستوى الإتقان</label>
+                            <select class="lang-level">
+                                <option value="مبتدئ">مبتدئ</option>
+                                <option value="متوسط">متوسط</option>
+                                <option value="متقدم">متقدم</option>
+                                <option value="طليق">طليق</option>
+                                <option value="لغة أم">لغة أم</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = content;
+            return div;
+        }
+
+        // Remove item
         function removeItem(button) {
             const item = button.closest('.dynamic-item');
             item.remove();
             updatePreview();
+        }
+
+        // Update preview
+        function updatePreview() {
+            updatePersonalInfo();
+            updateSummary();
+            updateExperience();
+            updateEducation();
+            updateSkillsPreview();
+            updateCertificates();
+            updateLanguages();
             calculateATSScore();
-            autoSaveToDatabase();
         }
 
-        function clearForm() {
-            if (confirm('هل أنت متأكد من مسح جميع البيانات؟')) {
-                document.querySelectorAll('input, textarea, select').forEach(input => {
-                    input.value = '';
-                });
-                
-                // Reset dynamic sections to have one item each
-                resetDynamicSections();
-                
-                currentCvId = null;
-                updatePreview();
-                calculateATSScore();
+        // Update personal info in preview
+        function updatePersonalInfo() {
+            const name = document.getElementById('fullName').value || 'اسمك الكامل';
+            const title = document.getElementById('jobTitle').value || 'المسمى الوظيفي';
+            const email = document.getElementById('email').value || 'your.email@domain.com';
+            const phone = document.getElementById('phone').value || '+966501234567';
+            const city = document.getElementById('city').value || 'المدينة';
+            const country = document.getElementById('country').value || 'البلد';
+            const linkedin = document.getElementById('linkedin').value;
+
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewTitle').textContent = title;
+            
+            let contactHTML = `
+                <div>Email: ${email}</div>
+                <div>Phone: ${phone}</div>
+                <div>Location: ${city}, ${country}</div>
+            `;
+            
+            if (linkedin) {
+                contactHTML += `<div>LinkedIn: ${linkedin}</div>`;
             }
+            
+            document.getElementById('previewContact').innerHTML = contactHTML;
         }
 
-        function resetDynamicSections() {
-            const containers = ['experienceContainer', 'educationContainer', 'certificatesContainer', 'languagesContainer'];
-            containers.forEach(containerId => {
-                const container = document.getElementById(containerId);
-                const items = container.querySelectorAll('.dynamic-item');
-                // Keep only the first item and clear its values
-                items.forEach((item, index) => {
-                    if (index === 0) {
-                        item.querySelectorAll('input, textarea, select').forEach(input => {
-                            input.value = '';
-                        });
-                    } else {
-                        item.remove();
-                    }
-                });
+        // Update summary
+        function updateSummary() {
+            const summary = document.getElementById('summary').value || 'Professional summary will appear here...';
+            document.getElementById('previewSummary').textContent = summary;
+        }
+
+        // Update experience
+        function updateExperience() {
+            const experiences = document.querySelectorAll('[data-type="experience"]');
+            const previewDiv = document.getElementById('previewExperience');
+            
+            if (experiences.length === 0) {
+                previewDiv.innerHTML = '<p>No experience added yet.</p>';
+                return;
+            }
+
+            let html = '';
+            experiences.forEach(exp => {
+                const title = exp.querySelector('.exp-title').value;
+                const company = exp.querySelector('.exp-company').value;
+                const location = exp.querySelector('.exp-location').value;
+                const start = exp.querySelector('.exp-start').value;
+                const end = exp.querySelector('.exp-end').value;
+                const desc = exp.querySelector('.exp-desc').value;
+
+                if (title || company) {
+                    html += `
+                        <div class="cv-item">
+                            <h4>${title || 'Job Title'}</h4>
+                            <div class="meta">${company || 'Company'} - ${location || 'Location'} | ${start || 'Start'} - ${end || 'End'}</div>
+                            <div>${formatBulletPoints(desc)}</div>
+                        </div>
+                    `;
+                }
             });
+
+            previewDiv.innerHTML = html || '<p>No experience added yet.</p>';
         }
 
-        function loadFromDatabase() {
-            if (!cvDatabase) {
-                cvDatabase = [];
+        // Update education
+        function updateEducation() {
+            const educations = document.querySelectorAll('[data-type="education"]');
+            const previewDiv = document.getElementById('previewEducation');
+            
+            if (educations.length === 0) {
+                previewDiv.innerHTML = '<p>No education added yet.</p>';
+                return;
+            }
+
+            let html = '';
+            educations.forEach(edu => {
+                const degree = edu.querySelector('.edu-degree').value;
+                const school = edu.querySelector('.edu-school').value;
+                const location = edu.querySelector('.edu-location').value;
+                const year = edu.querySelector('.edu-year').value;
+                const gpa = edu.querySelector('.edu-gpa').value;
+
+                if (degree || school) {
+                    html += `
+                        <div class="cv-item">
+                            <h4>${degree || 'Degree'}</h4>
+                            <div class="meta">${school || 'School'} - ${location || 'Location'} | ${year || 'Year'}</div>
+                            ${gpa ? `<div>Grade: ${gpa}</div>` : ''}
+                        </div>
+                    `;
+                }
+            });
+
+            previewDiv.innerHTML = html || '<p>No education added yet.</p>';
+        }
+
+        // Update skills preview
+        function updateSkillsPreview() {
+            const previewDiv = document.getElementById('previewSkills');
+            
+            if (skills.length === 0) {
+                previewDiv.innerHTML = '<p>No skills added yet.</p>';
+                return;
+            }
+
+            const skillsText = skills.join(' • ');
+            previewDiv.innerHTML = `<p>${skillsText}</p>`;
+        }
+
+        // Update certificates
+        function updateCertificates() {
+            const certificates = document.querySelectorAll('[data-type="certificate"]');
+            const previewDiv = document.getElementById('previewCertificates');
+            
+            if (certificates.length === 0) {
+                previewDiv.innerHTML = '<p>No certifications added yet.</p>';
+                return;
+            }
+
+            let html = '';
+            certificates.forEach(cert => {
+                const name = cert.querySelector('.cert-name').value;
+                const issuer = cert.querySelector('.cert-issuer').value;
+                const date = cert.querySelector('.cert-date').value;
+
+                if (name || issuer) {
+                    html += `
+                        <div class="cv-item">
+                            <h4>${name || 'Certification Name'}</h4>
+                            <div class="meta">${issuer || 'Issuer'} | ${date || 'Date'}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            previewDiv.innerHTML = html || '<p>No certifications added yet.</p>';
+        }
+
+        // Update languages
+        function updateLanguages() {
+            const languages = document.querySelectorAll('[data-type="language"]');
+            const previewDiv = document.getElementById('previewLanguages');
+            
+            if (languages.length === 0) {
+                previewDiv.innerHTML = '<p>No languages added yet.</p>';
+                return;
+            }
+
+            let html = '';
+            languages.forEach(lang => {
+                const name = lang.querySelector('.lang-name').value;
+                const level = lang.querySelector('.lang-level').value;
+
+                if (name) {
+                    html += `
+                        <div class="cv-item">
+                            <div>${name || 'Language'}: ${level || 'Level'}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            previewDiv.innerHTML = html || '<p>No languages added yet.</p>';
+        }
+
+        // Format bullet points
+        function formatBulletPoints(text) {
+            if (!text) return '';
+            
+            const lines = text.split('\n').filter(line => line.trim());
+            const formatted = lines.map(line => {
+                line = line.trim();
+                if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+                    return `<li>${line.substring(1).trim()}</li>`;
+                }
+                return `<li>${line}</li>`;
+            });
+            
+            return formatted.length > 0 ? `<ul>${formatted.join('')}</ul>` : '';
+        }
+
+        // Calculate ATS Score
+        function calculateATSScore() {
+            let score = 60; // Base score
+            const scoreElement = document.getElementById('scoreValue');
+            const scoreTextElement = document.getElementById('scoreText');
+            const scoreContainer = document.getElementById('atsScore');
+
+            // Check for filled fields
+            if (document.getElementById('fullName').value) score += 5;
+            if (document.getElementById('jobTitle').value) score += 10;
+            if (document.getElementById('email').value) score += 5;
+            if (document.getElementById('phone').value) score += 5;
+            if (document.getElementById('summary').value) score += 10;
+            if (skills.length > 0) score += 10;
+            if (document.querySelectorAll('[data-type="experience"]').length > 0) score += 15;
+            if (document.querySelectorAll('[data-type="education"]').length > 0) score += 10;
+
+            // Cap at 100
+            score = Math.min(score, 100);
+
+            scoreElement.textContent = `${score}%`;
+
+            // Update score text and color
+            scoreContainer.className = 'ats-score';
+            if (score >= 90) {
+                scoreTextElement.textContent = 'ممتاز - جاهز للإرسال';
+            } else if (score >= 75) {
+                scoreTextElement.textContent = 'جيد - يحتاج تحسينات طفيفة';
+                scoreContainer.classList.add('score-medium');
+            } else {
+                scoreTextElement.textContent = 'يحتاج تحسين - أضف المزيد من التفاصيل';
+                scoreContainer.classList.add('score-bad');
             }
         }
 
-        function loadExistingData() {
-            // This function can be enhanced to load specific CV data
-        }
-
+        // Generate PDF with enhanced mobile support and error handling
         async function generatePDF() {
             const loadingDiv = document.getElementById('loadingDiv');
-            const cvPreview = document.getElementById('cvPreview');
-            
+            loadingDiv.style.display = 'block';
+
             try {
-                // Show loading
-                loadingDiv.style.display = 'block';
+                // Wait for loading animation
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                const element = document.getElementById('cvPreview');
                 
-                // Force update preview before PDF generation
-                updatePreview();
-                
-                // Wait a moment to ensure all updates are applied
+                // Validate element exists and has content
+                if (!element || !element.innerHTML.trim()) {
+                    throw new Error('CV content not found or empty');
+                }
+
+                // Store original styles
+                const originalStyles = {
+                    width: element.style.width,
+                    height: element.style.height,
+                    fontSize: element.style.fontSize,
+                    transform: element.style.transform,
+                    position: element.style.position,
+                    left: element.style.left,
+                    top: element.style.top
+                };
+
+                // Force element to be visible and properly sized
+                element.style.position = 'absolute';
+                element.style.left = '-9999px';
+                element.style.top = '0';
+                element.style.width = '794px'; // A4 width in pixels at 96 DPI
+                element.style.height = 'auto';
+                element.style.fontSize = '12px';
+                element.style.transform = 'none';
+                element.style.maxWidth = '794px';
+                element.style.minHeight = '1123px'; // A4 height
+
+                // Force layout recalculation
+                element.offsetHeight;
+
+                // Wait for fonts and images to load
                 await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Save current data to database before generating PDF
-                const userData = collectAllData();
-                if (userData.personalInfo.fullName || userData.personalInfo.email) {
-                    saveToDatabase(userData);
-                }
-                
-                // Check if the preview has content
-                const previewName = document.getElementById('previewName').textContent;
-                if (!previewName || previewName === 'Your Full Name') {
-                    alert('يرجى ملء البيانات الأساسية أولاً (الاسم والمعلومات الشخصية)');
-                    loadingDiv.style.display = 'none';
-                    return;
-                }
-                
-                // Configure PDF options for better ATS compatibility
-                const opt = {
-                    margin: [0.5, 0.5, 0.5, 0.5],
-                    filename: `CV_${userData.personalInfo.fullName || 'Resume'}_${new Date().toISOString().split('T')[0]}.pdf`,
-                    image: { 
-                        type: 'jpeg', 
-                        quality: 1.0
-                    },
-                    html2canvas: { 
-                        scale: 2,
-                        useCORS: true,
-                        letterRendering: true,
-                        allowTaint: false,
-                        backgroundColor: '#ffffff',
-                        logging: false
-                    },
-                    jsPDF: { 
-                        unit: 'in', 
-                        format: 'a4', 
-                        orientation: 'portrait',
-                        compress: false
+
+                // Enhanced html2canvas options for mobile compatibility
+                const canvasOptions = {
+                    scale: window.devicePixelRatio || 1,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: 794,
+                    height: Math.max(1123, element.scrollHeight),
+                    scrollX: 0,
+                    scrollY: 0,
+                    x: 0,
+                    y: 0,
+                    windowWidth: 794,
+                    windowHeight: Math.max(1123, element.scrollHeight),
+                    ignoreElements: (element) => {
+                        return element.classList && (
+                            element.classList.contains('loading') ||
+                            element.classList.contains('btn') ||
+                            element.classList.contains('download-section')
+                        );
                     }
                 };
 
-                // Generate PDF using html2pdf
-                await html2pdf().set(opt).from(cvPreview).save();
+                console.log('Starting canvas generation...');
+                const canvas = await html2canvas(element, canvasOptions);
+                console.log('Canvas generated successfully:', canvas.width, 'x', canvas.height);
+
+                // Restore original styles
+                Object.keys(originalStyles).forEach(key => {
+                    if (originalStyles[key]) {
+                        element.style[key] = originalStyles[key];
+                    } else {
+                        element.style.removeProperty(key);
+                    }
+                });
+
+                // Validate canvas
+                if (!canvas || canvas.width === 0 || canvas.height === 0) {
+                    throw new Error('Failed to generate canvas from content');
+                }
+
+                // Create PDF with proper error handling
+                const { jsPDF } = window.jspdf;
+                if (!jsPDF) {
+                    throw new Error('PDF library not loaded');
+                }
+
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
                 
-                alert('تم تحميل السيرة الذاتية بنجاح!\n\nالملف متوافق مع أنظمة ATS وتم حفظ البيانات في قاعدة البيانات.');
+                if (!imgData || imgData === 'data:,') {
+                    throw new Error('Failed to convert canvas to image');
+                }
+
+                // Calculate dimensions for A4 (210mm x 297mm)
+                const pageWidth = 210;
+                const pageHeight = 297;
+                const margin = 10;
+                const imgWidth = pageWidth - (margin * 2);
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                console.log('Adding image to PDF...');
                 
+                // Handle multi-page PDFs if content is too tall
+                let yPosition = margin;
+                let remainingHeight = imgHeight;
+                let sourceY = 0;
+                
+                while (remainingHeight > 0) {
+                    const pageContentHeight = pageHeight - (margin * 2);
+                    const currentHeight = Math.min(remainingHeight, pageContentHeight);
+                    
+                    // Create canvas for current page
+                    const pageCanvas = document.createElement('canvas');
+                    pageCanvas.width = canvas.width;
+                    pageCanvas.height = (currentHeight / imgWidth) * canvas.width;
+                    
+                    const pageCtx = pageCanvas.getContext('2d');
+                    pageCtx.drawImage(
+                        canvas,
+                        0, sourceY,
+                        canvas.width, pageCanvas.height,
+                        0, 0,
+                        canvas.width, pageCanvas.height
+                    );
+                    
+                    const pageImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
+                    pdf.addImage(pageImgData, 'JPEG', margin, yPosition, imgWidth, currentHeight);
+                    
+                    remainingHeight -= currentHeight;
+                    sourceY += pageCanvas.height;
+                    
+                    if (remainingHeight > 0) {
+                        pdf.addPage();
+                        yPosition = margin;
+                    }
+                }
+
+                // Generate filename with validation
+                const nameField = document.getElementById('fullName');
+                const name = (nameField && nameField.value) ? nameField.value.trim() : 'CV';
+                const sanitizedName = name.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '').replace(/\s+/g, '_');
+                const filename = `${sanitizedName || 'CV'}_Resume.pdf`;
+
+                console.log('Saving PDF...');
+                
+                // Save with fallback for mobile browsers
+                try {
+                    pdf.save(filename);
+                } catch (saveError) {
+                    console.warn('Direct save failed, trying blob approach:', saveError);
+                    
+                    // Fallback method for mobile browsers
+                    const blob = pdf.output('blob');
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+
+                console.log('PDF generated successfully');
+
             } catch (error) {
-                console.error('Error generating PDF:', error);
-                alert('حدث خطأ في إنشاء ملف PDF. يرجى التأكد من ملء البيانات الأساسية والمحاولة مرة أخرى.');
+                console.error('PDF Generation Error:', error);
+                
+                let errorMessage = 'حدث خطأ في إنشاء ملف PDF. ';
+                
+                if (error.message.includes('canvas')) {
+                    errorMessage += 'يرجى التأكد من إدخال البيانات وإعادة المحاولة.';
+                } else if (error.message.includes('library not loaded')) {
+                    errorMessage += 'يرجى إعادة تحميل الصفحة والمحاولة مرة أخرى.';
+                } else {
+                    errorMessage += 'يرجى المحاولة مرة أخرى أو استخدام متصفح آخر.';
+                }
+                
+                alert(errorMessage);
+                
             } finally {
                 loadingDiv.style.display = 'none';
             }
         }
+
+        // Clear form
+        function clearForm() {
+            if (confirm('هل أنت متأكد من حذف جميع البيانات؟')) {
+                // Clear all input fields
+                document.querySelectorAll('input, textarea, select').forEach(field => {
+                    field.value = '';
+                });
+
+                // Clear skills
+                skills = [];
+                displaySkills();
+
+                // Reset dynamic sections to have one item each
+                resetDynamicSections();
+                
+                updatePreview();
+            }
+        }
+
+        // Reset dynamic sections
+        function resetDynamicSections() {
+            const sections = ['experience', 'education', 'certificate', 'language'];
+            
+            sections.forEach(type => {
+                const container = document.getElementById(`${type}Container`) || 
+                                document.getElementById(`${type}sContainer`);
+                
+                if (container) {
+                    // Remove all existing items
+                    container.querySelectorAll('.dynamic-item').forEach(item => item.remove());
+                    
+                    // Add one new empty item
+                    const newItem = createDynamicItem(type);
+                    container.appendChild(newItem);
+                }
+            });
+        }
+
+        // Initialize with default skills
+        function initializeDefaultSkills() {
+            skills = ['JavaScript', 'HTML', 'CSS'];
+            displaySkills();
+        }
+
+        // Call this on page load if needed
+        // initializeDefaultSkills();
     </script>
 </body>
 </html>
