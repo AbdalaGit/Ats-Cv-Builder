@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://abdalagit.github.io/Ats-Cv-Builder/sitemap.xml
